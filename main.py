@@ -67,25 +67,36 @@ def verify_firebase_user(token: str):
 async def generate_recommendation(token: str = Depends(security)):
     user_id = verify_firebase_user(token.credentials)
 
-    # Fetch user attributes from Firestore
-    user_doc = db.collection("users").document(user_id).get()
+    # Fetch user document
+    user_doc_ref = db.collection("users").document(user_id)
+    user_doc = user_doc_ref.get()
+
     if not user_doc.exists:
         raise HTTPException(status_code=404, detail="User attributes not found")
 
     user_attributes = user_doc.to_dict()
 
-    # Fetch user history
-    history_ref = db.collection("users").document(user_id).collection("history")
+    # Fetch user's dietary goals
+    history_ref = user_doc_ref.collection("dietary_goals")
     history_docs = history_ref.stream()
     user_history = [doc.to_dict() for doc in history_docs]
 
-    # Load available meals from JSON
+    # Load available meals
     with open(MEALS_JSON_FILE, "r") as f:
         meals_data = json.load(f)
 
-    # Structured JSON output definition
-    functions = [
-        {
+    # Prompt for AI model
+    prompt = f"""
+    Based on the user's dietary goals: {user_history} and attributes: {user_attributes},
+    recommend meals from the available options. Format the response strictly according to the function schema.
+    Here are the available meals: {meals_data}
+    """
+
+    # Structured response from OpenAI
+    response = openai.ChatCompletion.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}],
+        functions=[{
             "name": "generate_meal_recommendations",
             "description": "Generate structured meal recommendations based on user attributes and history.",
             "parameters": {
@@ -101,7 +112,6 @@ async def generate_recommendation(token: str = Depends(security)):
                                 "description": {"type": "string", "description": "Short description of the meal"},
                                 "nutritional_attributes": {
                                     "type": "array",
-                                    "description": "List of relevant nutritional attributes based on user goals.",
                                     "items": {"type": "string"}
                                 }
                             }
@@ -110,25 +120,10 @@ async def generate_recommendation(token: str = Depends(security)):
                 },
                 "required": ["recommendations"]
             }
-        }
-    ]
-
-    # Constructing the detailed prompt
-    prompt = f"""
-    Based on the user's dietary history: {user_history} and attributes: {user_attributes},
-    recommend meals from the available options. Format the response strictly according to the function schema.
-    Here are the available meals: {meals_data}
-    """
-
-    # Call GPT-4o-mini with structured JSON mode
-    response = openai.ChatCompletion.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}],
-        functions=functions,
-        function_call={"name": "generate_meal_recommendations"}  # Force structured JSON output
+        }],
+        function_call={"name": "generate_meal_recommendations"}
     )
 
-    # Extract the structured response
     recommendation_data = response["choices"][0]["message"]["function_call"]["arguments"]
 
     return json.loads(recommendation_data)
