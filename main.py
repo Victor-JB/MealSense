@@ -58,7 +58,7 @@ db = firestore.client()
 security = HTTPBearer()
 
 # OpenAI API Key
-openai.api_key = os.getenv("openai_key")
+client = openai.AsyncOpenAI(api_key=os.getenv("openai_key"))
 
 def verify_firebase_user(token: str):
     try:
@@ -70,74 +70,78 @@ def verify_firebase_user(token: str):
 
 @app.get("/generate-recommendation/")
 async def generate_recommendation(token: str = Depends(security)):
-    user_id = verify_firebase_user(token.credentials)
-    # logger.warning("user_id" + user_id)
+    print(token.credentials)
+    # user_id = verify_firebase_user(token.credentials)
 
     # Fetch user document
-    user_doc_ref = db.collection("users").document(user_id)
-    logger.warning("user_doc_ref" + user_doc_ref)
+    user_doc_ref = db.collection("users").document(token.credentials)
     user_doc = user_doc_ref.get()
-
-    logger.warning("user_doc" + user_doc)
 
     if not user_doc.exists:
         raise HTTPException(status_code=404, detail="User attributes not found")
 
     user_profile = user_doc.to_dict()
-    logger.warning("user_profile" + user_profile)
 
     # Load available meals
     with open(MEALS_JSON_FILE, "r") as f:
         meals_data = json.load(f)
-    logger.warning("meals" + meals_data)
 
     # Prompt for AI model
     prompt = f"""
-    You are a knowledgeable nutritionist and dietician that is helping a student pick an optimized meal from a list of meals given their health goals.
-    You will be given all of the user's info as a json object, and need to take into account their dietary goals and their general profile to generate the
-    best top 3 meal choices for them.
+    You are a knowledgeable nutritionist and dietitian helping a student pick an optimized meal from a list of meals given their health goals.
+    You will be given all of the user's info as a JSON object, and need to take into account their dietary goals and general profile to generate
+    the best top 3 meal choices for them.
     Format the response strictly according to the function schema.
-    Here is the user's json profile:\n\n{user_profile}\n\n
-    Here are the available meals:\n\n{meals_data}\n
-    """
-    logger.warning("prompt" + prompt)
 
-    # Structured response from OpenAI
-    response = openai.ChatCompletion.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}],
-        functions=[{
-            "name": "generate_meal_recommendations",
-            "description": "Generate structured meal recommendations based on user attributes and meal goals.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "recommendations": {
-                        "type": "array",
-                        "description": "List of recommended meals with details.",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "meal_name": {"type": "string", "description": "Name of the recommended meal"},
-                                "description": {"type": "string", "description": "Short description of the meal"},
-                                "nutritional_attributes": {
-                                    "type": "array",
-                                    "items": {"type": "string"}
+    Here is the user's JSON profile:
+    {user_profile}
+
+    Here are the available meals:
+    {meals_data}
+    """
+    try:
+        # Call OpenAI API
+        response = await client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            tools=[
+                {
+                "type": "function",
+                "function": {
+                    "name": "generate_meal_recommendations",
+                    "description": "Generate structured meal recommendations based on user attributes and meal goals.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "recommendations": {
+                                "type": "array",
+                                "description": "List of recommended meals with details.",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "meal_name": {"type": "string", "description": "Name of the recommended meal"},
+                                        "description": {"type": "string", "description": "Short description of the meal"},
+                                        "nutritional_attributes": {
+                                            "type": "array",
+                                            "items": {"type": "string"}
+                                        }
+                                    }
                                 }
                             }
+                        },
+                        "required": ["recommendations"]
                         }
                     }
-                },
-                "required": ["recommendations"]
-            }
-        }],
-        function_call={"name": "generate_meal_recommendations"}
-    )
-    logger.warning("response" + response)
+                }
+            ],
+            tool_choice={"type": "function", "function": {"name": "generate_meal_recommendations"}}
+        )
+    except Exception as e:
+        logger.error("OpenAI API call failed: " + str(e))
+        return {"error": str(e)}
 
-    recommendation_data = response["choices"][0]["message"]["function_call"]["arguments"]
-
-    return json.loads(recommendation_data)
+    recommendation_data = response.choices[0].message.tool_calls[0].function.arguments
+    return recommendation_data
 
 @app.post("/set-user-data/")
 async def set_user_data(token: str = Depends(security), user_data: dict = Body(...)):

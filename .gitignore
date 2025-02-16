@@ -173,3 +173,4 @@ cython_debug/
 # ignoring auth jsons
 mealsense-firebase-access.json
 google-services.json
+test.py
