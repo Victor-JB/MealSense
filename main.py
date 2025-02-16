@@ -73,7 +73,7 @@ async def generate_recommendation(token: str = Depends(security)):
     user_id = verify_firebase_user(token.credentials)
 
     # Fetch user document
-    user_doc_ref = db.collection("users").document(token.credentials)
+    user_doc_ref = db.collection("users").document(user_id)
     user_doc = user_doc_ref.get()
 
     if not user_doc.exists:
