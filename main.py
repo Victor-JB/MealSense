@@ -74,12 +74,7 @@ async def generate_recommendation(token: str = Depends(security)):
     if not user_doc.exists:
         raise HTTPException(status_code=404, detail="User attributes not found")
 
-    user_attributes = user_doc.to_dict()
-
-    # Fetch user's dietary goals
-    history_ref = user_doc_ref.collection("dietary_goals")
-    history_docs = history_ref.stream()
-    user_history = [doc.to_dict() for doc in history_docs]
+    user_profile = user_doc.to_dict()
 
     # Load available meals
     with open(MEALS_JSON_FILE, "r") as f:
@@ -87,9 +82,12 @@ async def generate_recommendation(token: str = Depends(security)):
 
     # Prompt for AI model
     prompt = f"""
-    Based on the user's dietary goals: {user_history} and attributes: {user_attributes},
-    recommend meals from the available options. Format the response strictly according to the function schema.
-    Here are the available meals: {meals_data}
+    You are a knowledgeable nutritionist and dietician that is helping a student pick an optimized meal from a list of meals given their health goals.
+    You will be given all of the user's info as a json object, and need to take into account their dietary goals and their general profile to generate the
+    best top 3 meal choices for them.
+    Format the response strictly according to the function schema.
+    Here is the user's json profile:\n\n{user_profile}\n\n
+    Here are the available meals:\n\n{meals_data}\n
     """
 
     # Structured response from OpenAI
