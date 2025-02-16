@@ -3,6 +3,11 @@
 import os
 from dotenv import load_dotenv
 
+# for getting menu from transact api
+import requests
+import json
+from datetime import datetime
+
 # fast api imports
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.security import HTTPBearer
@@ -18,6 +23,10 @@ from firebase_admin import auth, credentials, firestore
 load_dotenv()
 
 app = FastAPI() # This is what will be refrenced in config
+
+MEALS_JSON_FILE = "current_meals.json"
+# need the actual transact api url; public-facing one doesn't exist :(
+DINING_API_URL = "https://example.com/dining-hall/meals"
 
 # Retrieve Firebase credentials from environment variables
 firebase_config = {
@@ -58,14 +67,25 @@ def verify_firebase_user(token: str):
 async def generate_recommendation(token: str = Depends(security)):
     user_id = verify_firebase_user(token.credentials)
 
-    # Fetch user history from Firestore
-    user_ref = db.collection("users").document(user_id).collection("history")
-    history_docs = user_ref.stream()
+    # Fetch user attributes from Firestore
+    user_doc = db.collection("users").document(user_id).get()
+
+    if not user_doc.exists:
+        raise HTTPException(status_code=404, detail="User attributes not found")
+
+    user_attributes = user_doc.to_dict()
+
+    # Fetch user history
+    history_ref = db.collection("users").document(user_id).collection("history")
+    history_docs = history_ref.stream()
 
     user_history = [doc.to_dict() for doc in history_docs]
 
-    # Query ChatGPT
-    prompt = f"Given the user's history: {user_history}, generate meal recommendations."
+    with open(MEALS_JSON_FILE, "r") as f:
+        meals_data = json.load(f)
+
+    # Query ChatGPT with user history and attributes
+    prompt = f"Given the user's history: {user_history} and attributes: {user_attributes}, generate meal recommendations."
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}]
@@ -73,3 +93,18 @@ async def generate_recommendation(token: str = Depends(security)):
 
     recommendation = response["choices"][0]["message"]["content"]
     return {"recommendation": recommendation}
+
+@app.get("/update-meals/")
+def update_meals():
+    """Fetch new meals and update JSON file."""
+    try:
+        response = requests.get(DINING_API_URL)
+        if response.status_code == 200:
+            meals_data = response.json()
+            with open(MEALS_JSON_FILE, "w") as f:
+                json.dump(meals_data, f, indent=4)
+            return {"status": "success", "message": "Meals updated successfully"}
+        else:
+            return {"status": "error", "message": f"Failed to fetch meals: {response.status_code}"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
