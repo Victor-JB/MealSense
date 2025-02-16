@@ -75,7 +75,10 @@ async def generate_recommendation(token: str = Depends(security)):
 
     # Fetch user document
     user_doc_ref = db.collection("users").document(user_id)
+    logger.warning("user_id" + user_id)
     user_doc = user_doc_ref.get()
+
+    logger.warning("user_id" + user_id)
 
     if not user_doc.exists:
         raise HTTPException(status_code=404, detail="User attributes not found")
