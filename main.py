@@ -126,7 +126,7 @@ async def generate_recommendation(token: str = Depends(security)):
                                             },
                                             "tags": {
                                                 "type": "array",
-                                                "description": "1, 2, or 3 specific reasons why to pick food items specific to the user, things like 'high protein' or 'low sodium,' 'carbs,' 'cheap,' 'quick eats,' etc.",
+                                                "description": "1, 2, or 3 specific reasons why to pick food items specific to the user, things like 'high protein' or 'low sodium,' 'carbs,' 'cheap,' 'quick eats,' emphasis on nutritional qualities",
                                                 "items": {
                                                     "type": "string"
                                                 }
