@@ -61,8 +61,11 @@ const HomeScreen = () => {
     const fetchUserProfile = async () => {
       try {
         const userProfile = await getUserProfile();
-        if (userProfile && userProfile.firstName) {
+        if (userProfile) {
           setFirstName(userProfile.firstName);
+        } else {
+          console.log("Invalid user profile found");
+          console.log(userProfile);
         }
       } catch (error) {
         console.error("Error fetching user profile:", error);
