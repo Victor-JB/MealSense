@@ -39,3 +39,7 @@ app-example
 firebaseConfig.ts
 google-services.json
 .env
+
+# for python
+.venv
+mealsense-firebase-access.json
