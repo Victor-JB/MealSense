@@ -26,7 +26,7 @@ load_dotenv()
 
 app = FastAPI() # This is what will be refrenced in config
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(level=logging.WARNING, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 MEALS_JSON_FILE = "current_meals.json"
@@ -71,7 +71,7 @@ def verify_firebase_user(token: str):
 @app.get("/generate-recommendation/")
 async def generate_recommendation(token: str = Depends(security)):
     user_id = verify_firebase_user(token.credentials)
-    logger.info("user_id" + user_id)
+    logger.warning("user_id" + user_id)
 
     # Fetch user document
     user_doc_ref = db.collection("users").document(user_id)
@@ -81,12 +81,12 @@ async def generate_recommendation(token: str = Depends(security)):
         raise HTTPException(status_code=404, detail="User attributes not found")
 
     user_profile = user_doc.to_dict()
-    logger.info("user_profile" + user_profile)
+    logger.warning("user_profile" + user_profile)
 
     # Load available meals
     with open(MEALS_JSON_FILE, "r") as f:
         meals_data = json.load(f)
-    logger.info("meals" + meals_data)
+    logger.warning("meals" + meals_data)
 
     # Prompt for AI model
     prompt = f"""
@@ -97,7 +97,7 @@ async def generate_recommendation(token: str = Depends(security)):
     Here is the user's json profile:\n\n{user_profile}\n\n
     Here are the available meals:\n\n{meals_data}\n
     """
-    logger.info("prompt" + prompt)
+    logger.warning("prompt" + prompt)
 
     # Structured response from OpenAI
     response = openai.ChatCompletion.create(
@@ -130,7 +130,7 @@ async def generate_recommendation(token: str = Depends(security)):
         }],
         function_call={"name": "generate_meal_recommendations"}
     )
-    logger.info("response" + response)
+    logger.warning("response" + response)
 
     recommendation_data = response["choices"][0]["message"]["function_call"]["arguments"]
 
