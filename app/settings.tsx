@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ScrollView, SafeAreaView, View, Pressable, Animated } from "react-native";
 import { TextInput, Button, Text, SegmentedButtons, useTheme } from "react-native-paper";
+import { updateUserField } from "../mainService";
 
 const SettingsScreen: React.FC = () => {
     const theme = useTheme(); // Get theme colors
@@ -148,7 +149,13 @@ const SettingsScreen: React.FC = () => {
                 />
 
                 {/* Save Button */}
-                <Button mode="contained" onPress={() => console.log("Settings Saved")} style={{ marginTop: 20 }}>
+                <Button mode="contained" onPress={() => {
+                    // updateUserField("height", height);
+                    // updateUserField("weight", weight);
+                    // updateUserField("sex", sex);
+                    // updateUserField("dietaryGoals", additionalInfo);
+                    console.log("Settings Saved");
+                }} style={{ marginTop: 20 }}>
                     Save Changes
                 </Button>
             </ScrollView>

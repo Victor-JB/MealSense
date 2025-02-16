@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { View, SafeAreaView } from "react-native";
 import { TextInput, Button, Text, Card, useTheme } from "react-native-paper";
-import { router } from "expo-router";
 import { signIn } from "../authService";
 import useAuth from "../useAuth";
+import { useNavigation } from "@react-navigation/native";
 
 const SignInScreen: React.FC = () => {
   const theme = useTheme();
+  const navigation = useNavigation(); // ✅ Get navigation instance
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -15,7 +16,7 @@ const SignInScreen: React.FC = () => {
   // 🔥 FIX: Ensure navigation only happens *after* render
   useEffect(() => {
     if (user) {
-      router.replace("/settings"); // Navigate only when user is set
+      navigation.navigate("Main"); // ✅ Navigate to Main App on login
     }
   }, [user]);
 
@@ -24,7 +25,7 @@ const SignInScreen: React.FC = () => {
   const handleSignIn = async () => {
     try {
       await signIn(email, password);
-      // No need to call router.replace here! It will be handled by useEffect
+      // No need to call navigation.replace here! It will be handled by useEffect
     } catch (error: any) {
       setError(error.message);
     }
@@ -55,7 +56,8 @@ const SignInScreen: React.FC = () => {
           <Button mode="contained" onPress={handleSignIn} style={{ marginBottom: 10 }}>
             Sign In
           </Button>
-          <Button mode="text" onPress={() => router.push("/sign-up")}>
+          {/* ✅ FIXED: Use navigation instead of router */}
+          <Button mode="text" onPress={() => navigation.navigate("SignUp")}>
             Don't have an account? Sign Up
           </Button>
         </Card>

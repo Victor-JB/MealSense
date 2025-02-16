@@ -7,16 +7,17 @@ import { NavigationContainer } from "@react-navigation/native";
 import HomeScreen from "./home";
 import SettingsScreen from "./settings";
 import ProfileScreen from "./profile";
-import SignInScreen from "./index"; // ✅ Ensure correct import
+import SignInScreen from "./index";
+import SignUpScreen from "./sign-up";
 
 export default function Layout() {
   return (
     <PaperProvider>
-      <NavigationContainer>
+      {/* <NavigationContainer> */}
         <ThemedSafeAreaView>
           <RootNavigator />
         </ThemedSafeAreaView>
-      </NavigationContainer>
+      {/* </NavigationContainer> */}
     </PaperProvider>
   );
 }
@@ -28,6 +29,7 @@ const RootNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="SignIn" component={SignInScreen} />
+      <Stack.Screen name="SignUp" component={SignUpScreen} />
       <Stack.Screen name="Main" component={BottomTabNavigator} />
     </Stack.Navigator>
   );
