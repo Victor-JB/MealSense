@@ -137,7 +137,7 @@ async def generate_recommendation(token: str = Depends(security)):
                                             },
                                             "reason": {
                                                 "type": "string",
-                                                "description": "Brief description of the food and why it is an optimal food choice for this specific individual and their food goals."
+                                                "description": "Description of the food and why it is an optimal food choice for this specific individual and their food goals."
                                             },
                                             "price": {
                                                 "type": "number",
