@@ -15,7 +15,8 @@ const SignUpScreen: React.FC = () => {
     const handleSignUp = async () => {
         try {
             await signUp(email, password);
-            router.replace("/home"); // Redirect to Home after successful sign-up
+            initializeUserProfile();
+            router.replace("/home");
         } catch (error: any) {
             setError(error.message);
         }
@@ -29,7 +30,6 @@ const SignUpScreen: React.FC = () => {
                         Create an Account
                     </Text>
 
-                    {/* Email Input */}
                     <TextInput
                         label="Email"
                         value={email}
@@ -39,7 +39,6 @@ const SignUpScreen: React.FC = () => {
                         style={{ backgroundColor: theme.colors.surface, marginBottom: 10 }}
                     />
 
-                    {/* Password Input */}
                     <TextInput
                         label="Password"
                         value={password}
@@ -49,19 +48,16 @@ const SignUpScreen: React.FC = () => {
                         style={{ backgroundColor: theme.colors.surface, marginBottom: 10 }}
                     />
 
-                    {/* Error Message */}
                     {error && (
                         <Text style={{ color: theme.colors.error, marginBottom: 10 }}>
                             {error}
                         </Text>
                     )}
 
-                    {/* Sign Up Button */}
                     <Button mode="contained" onPress={handleSignUp} style={{ marginBottom: 10 }}>
                         Sign Up
                     </Button>
 
-                    {/* Navigate to Sign In */}
                     <Button mode="text" onPress={() => navigation.goBack()}>
                         Already have an account? Sign In
                     </Button>

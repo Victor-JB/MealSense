@@ -21,7 +21,6 @@ const ProfileScreen: React.FC = () => {
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
-            {/* Log Out Button in Top Right */}
             <TouchableOpacity
                 style={{ position: "absolute", top: 20, right: 20 }}
                 onPress={handleLogout}
@@ -29,7 +28,6 @@ const ProfileScreen: React.FC = () => {
                 <Avatar.Icon size={36} icon="logout" style={{ backgroundColor: theme.colors.primary }} />
             </TouchableOpacity>
 
-            {/* Profile Content */}
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                 <Avatar.Icon size={80} icon="account" />
                 <Text variant="headlineMedium" style={{ marginTop: 20 }}>

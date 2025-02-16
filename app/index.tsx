@@ -4,6 +4,8 @@ import { TextInput, Button, Text, Card, useTheme } from "react-native-paper";
 import { signIn } from "../authService";
 import useAuth from "../useAuth";
 import { useNavigation } from "@react-navigation/native";
+import auth from "@react-native-firebase/auth";
+import { initializeUserProfile } from "../mainService";
 
 const SignInScreen: React.FC = () => {
   const theme = useTheme();
@@ -12,6 +14,16 @@ const SignInScreen: React.FC = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const { user, loading } = useAuth(); 
+
+  useEffect(() => {
+    const unsubscribe = auth().onAuthStateChanged((user) => {
+        if (user) {
+            initializeUserProfile();
+        }
+    });
+
+    return () => unsubscribe(); // Cleanup listener
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -55,7 +67,6 @@ const SignInScreen: React.FC = () => {
           <Button mode="contained" onPress={handleSignIn} style={{ marginBottom: 10 }}>
             Sign In
           </Button>
-          {/* FIXED: Use navigation instead of router */}
           <Button mode="text" onPress={() => navigation.navigate("SignUp")}>
             Don't have an account? Sign Up
           </Button>

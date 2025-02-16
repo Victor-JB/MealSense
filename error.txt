@@ -1,0 +1,11 @@
+It's erroring saying "VirtualizedLists should never be nested inside plain ScrollViews with the same orientation because it can break windowing and other functionality - use another VirtualizedList-backed container instead. [Component Stack]" and here is the settings.tsx file: 
+
+
+Uncaught Error
+Native module RNFBAppModule not found. Re-check module install, linking, configuration, build and install steps. Call Stack
+Constructor
+C:\Users\neonf\ Documents\Git...nal\RNFBNative EventEmitter. js <global>
+C\Users\neonf\Documents\Git.rnal\RNFBNative EventEmitter.js loadModuleImplementat ion C:\Users\neonf\ Documents\Gith...runtime\ src\polyfil ls\require.js guardedLoadModule C:\Users\neonf\ Documents\Gith...untime\ src\polyfills\require,js metroRequire C:\Users\neonf\ Documents\Gith...runtime\ src\polyfills\require,js <global
+C:\Users\neonf\ Documents\Git.. nternal\registry\native Module.js loadModuleImplementat ion C:\Users\neonf\Documents\Gith...runtime\src\polyfil ls\require.js guarded LoadModule C\Users\neonf\ Documents\Gith...runtime\ src\polyfil ls\require.js metroRequire C:\Users\neonf\ Documents\Gith...untime\ src\polyfills\require,js <globa l>
+C:\Users\neonf\ Documents\Git.firebase\app\lib\ Fire baseApp.js loadModuleImplementation C\Users\neonf\ Documents\Gith...runtime\src\polyfills\require.js guardedLoadModule C:\Users\neonf\Documents\Gith...-runtime\src\polyfills\require.js metroRequire C:\Users\neonf\ Documents\Gith...runtime\src\polyfills\require.js <global>
+C:\Users\neonf\Documents\Git..rebase\app\lib\internal\index.js loadModuleImplementation C\Users\neonf\ Documents\Gith...runtime\ src\polyfills\requ ire,js
