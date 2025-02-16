@@ -144,6 +144,21 @@ async def set_user_data(token: str = Depends(security), user_data: dict = Body(.
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to update user data: {str(e)}")
 
+@app.get("/get-user-data/")
+async def get_user_data(token: str = Depends(security)):
+    """
+    Retrieves user profile data from Firestore using the provided Firebase token.
+    """
+    user_id = verify_firebase_user(token.credentials)
+
+    # Reference to the user's document
+    user_doc_ref = db.collection("users").document(user_id)
+    user_doc = user_doc_ref.get()
+
+    if not user_doc.exists:
+        raise HTTPException(status_code=404, detail="User data not found")
+
+    return {"status": "success", "user_data": user_doc.to_dict()}
 
 @app.get("/update-meals/")
 def update_meals():
