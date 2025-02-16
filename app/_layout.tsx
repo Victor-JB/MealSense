@@ -1,20 +1,39 @@
+import { createStackNavigator } from "@react-navigation/stack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { PaperProvider, useTheme } from "react-native-paper";
 import { SafeAreaView, View, StatusBar, Platform } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Tabs } from "expo-router";
+import { NavigationContainer } from "@react-navigation/native";
+import HomeScreen from "./home";
+import SettingsScreen from "./settings";
+import ProfileScreen from "./profile";
+import SignInScreen from "./index"; // ✅ Ensure correct import
 
 export default function Layout() {
   return (
     <PaperProvider>
-      <ThemedSafeAreaView>
-        <BottomTabNavigator />
-      </ThemedSafeAreaView>
+      <NavigationContainer>
+        <ThemedSafeAreaView>
+          <RootNavigator />
+        </ThemedSafeAreaView>
+      </NavigationContainer>
     </PaperProvider>
   );
 }
 
-// Create Material Bottom Tab Navigator
+// ✅ Create a Stack Navigator to manage authentication
+const Stack = createStackNavigator();
+
+const RootNavigator = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="SignIn" component={SignInScreen} />
+      <Stack.Screen name="Main" component={BottomTabNavigator} />
+    </Stack.Navigator>
+  );
+};
+
+// ✅ Create Bottom Tab Navigator for authenticated users
 const Tab = createMaterialBottomTabNavigator();
 
 const BottomTabNavigator = () => {
@@ -22,25 +41,17 @@ const BottomTabNavigator = () => {
 
   return (
     <Tab.Navigator
-      shifting={true} // Enables smooth shifting animations
+      shifting={true}
       barStyle={{
-        backgroundColor: theme.colors.surface, // Matches React Native Paper theme
-        height: 65, // Ensures proper height
+        backgroundColor: theme.colors.surface,
+        height: 65,
       }}
-      activeColor={theme.colors.primary} // Active icon color
-      inactiveColor={theme.colors.onSurfaceVariant} // Inactive icon color
+      activeColor={theme.colors.primary}
+      inactiveColor={theme.colors.onSurfaceVariant}
     >
       <Tab.Screen
-        name="home"
-        options={{
-          tabBarLabel: "Home",
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="home" size={26} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
         name="settings"
+        component={SettingsScreen}
         options={{
           tabBarLabel: "Settings",
           tabBarIcon: ({ color }) => (
@@ -49,7 +60,18 @@ const BottomTabNavigator = () => {
         }}
       />
       <Tab.Screen
+        name="home"
+        component={HomeScreen}
+        options={{
+          tabBarLabel: "Home",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="home" size={26} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
         name="profile"
+        component={ProfileScreen}
         options={{
           tabBarLabel: "Profile",
           tabBarIcon: ({ color }) => (
@@ -61,8 +83,8 @@ const BottomTabNavigator = () => {
   );
 };
 
-// Themed SafeAreaView Wrapper
-const ThemedSafeAreaView = ({ children }: any) => {
+// ✅ Themed SafeAreaView Wrapper
+const ThemedSafeAreaView = ({ children }) => {
   const theme = useTheme();
   return (
     <View

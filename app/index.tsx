@@ -15,7 +15,7 @@ const SignInScreen: React.FC = () => {
   // 🔥 FIX: Ensure navigation only happens *after* render
   useEffect(() => {
     if (user) {
-      router.replace("/home"); // Navigate only when user is set
+      router.replace("/settings"); // Navigate only when user is set
     }
   }, [user]);
 
@@ -24,7 +24,7 @@ const SignInScreen: React.FC = () => {
   const handleSignIn = async () => {
     try {
       await signIn(email, password);
-      // 🚀 No need to call router.replace here! It will be handled by useEffect
+      // No need to call router.replace here! It will be handled by useEffect
     } catch (error: any) {
       setError(error.message);
     }

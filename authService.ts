@@ -12,3 +12,8 @@ export const signIn = async (email: string, password: string) => {
 export const logOut = async () => {
   return signOut(auth);
 };
+
+export const getMessage = async () => {
+  
+  return "Good Morning";
+};

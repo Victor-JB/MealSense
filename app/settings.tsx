@@ -4,6 +4,7 @@ import { TextInput, Button, Text, SegmentedButtons, useTheme } from "react-nativ
 
 const SettingsScreen: React.FC = () => {
     const theme = useTheme(); // Get theme colors
+    const [name, setName] = useState("");
     const [unit, setUnit] = useState<"metric" | "imperial">("metric");
     const [height, setHeight] = useState("");
     const [weight, setWeight] = useState("");
@@ -27,6 +28,17 @@ const SettingsScreen: React.FC = () => {
         <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
             <ScrollView contentContainerStyle={{ padding: 20 }}>
                 <Text variant="titleLarge">Settings</Text>
+
+                {/* Name Input */}
+                <Text variant="titleMedium" style={{ marginTop: 20 }}>First Name</Text>
+                <TextInput
+                    label={`First Name`}
+                    value={name}
+                    onChangeText={setName}
+                    keyboardType="default"
+                    mode="outlined"
+                    style={{ backgroundColor: theme.colors.surface }}
+                />
 
                 {/* Unit Selector */}
                 <Text variant="titleMedium" style={{ marginTop: 20 }}>Units</Text>
@@ -126,7 +138,7 @@ const SettingsScreen: React.FC = () => {
                 {/* Additional Info Box */}
                 <Text variant="titleMedium" style={{ marginTop: 20 }}>Additional Information</Text>
                 <TextInput
-                    label="Enter any other details..."
+                    label="Enter dietary restrictions, eating and health goals..."
                     value={additionalInfo}
                     onChangeText={setAdditionalInfo}
                     multiline
