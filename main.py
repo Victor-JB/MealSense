@@ -9,7 +9,7 @@ import json
 from datetime import datetime
 
 # fast api imports
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Body
 from fastapi.security import HTTPBearer
 
 # chat api
@@ -125,6 +125,25 @@ async def generate_recommendation(token: str = Depends(security)):
     recommendation_data = response["choices"][0]["message"]["function_call"]["arguments"]
 
     return json.loads(recommendation_data)
+
+@app.post("/set-user-data/")
+async def set_user_data(token: str = Depends(security), user_data: dict = Body(...)):
+    """
+    Accepts a Firebase user token and a dictionary of user field data.
+    It creates or updates the user's document in Firestore.
+    """
+    user_id = verify_firebase_user(token.credentials)
+
+    # Reference to the user's document
+    user_doc_ref = db.collection("users").document(user_id)
+
+    try:
+        # Use set() with merge=True to update or create the document
+        user_doc_ref.set(user_data, merge=True)
+        return {"status": "success", "message": "User data updated successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to update user data: {str(e)}")
+
 
 @app.get("/update-meals/")
 def update_meals():
