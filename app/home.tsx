@@ -57,18 +57,19 @@ const HomeScreen = () => {
   const [greeting, setGreeting] = useState("never set");
   const [firstName, setFirstName] = useState("User");
 
-  useEffect(async () => {
-    try {
-      const userProfile = await getUserProfile();
-      if (userProfile) {
-        setFirstName(userProfile.firstName);
-      } else {
-        console.log("Invalid user profile found");
-        console.log(userProfile);
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const userProfile = await getUserProfile();
+        if (userProfile && userProfile.firstName) {
+          setFirstName(userProfile.firstName);
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
       }
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-    }
+    };
+
+    fetchUserProfile();
   }, []);
 
   useEffect(() => {
@@ -152,8 +153,6 @@ const HomeScreen = () => {
                     </View>
                   </View>
 
-
-                  '
                 </View>
               </TouchableOpacity>
 
