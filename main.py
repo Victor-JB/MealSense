@@ -70,8 +70,7 @@ def verify_firebase_user(token: str):
 
 @app.get("/generate-recommendation/")
 async def generate_recommendation(token: str = Depends(security)):
-    print(token.credentials)
-    # user_id = verify_firebase_user(token.credentials)
+    user_id = verify_firebase_user(token.credentials)
 
     # Fetch user document
     user_doc_ref = db.collection("users").document(token.credentials)
@@ -88,9 +87,10 @@ async def generate_recommendation(token: str = Depends(security)):
 
     # Prompt for AI model
     prompt = f"""
-    You are a knowledgeable nutritionist and dietitian helping a student pick an optimized meal from a list of meals given their health goals.
+    You are a knowledgeable nutritionist and dietitian helping a student pick an optimized meal from a list of meals given their health goals and their dining points.
+    Context on dining points: students have plans of 2100 dining points to spread out over 11 weeks.
     You will be given all of the user's info as a JSON object, and need to take into account their dietary goals and general profile to generate
-    the best top 3 meal choices for them.
+    the best top 3 meal choices for them, including potential meal modifications.
     Format the response strictly according to the function schema.
 
     Here is the user's JSON profile:
@@ -99,6 +99,7 @@ async def generate_recommendation(token: str = Depends(security)):
     Here are the available meals:
     {meals_data}
     """
+
     try:
         # Call OpenAI API
         response = await client.chat.completions.create(
@@ -106,30 +107,48 @@ async def generate_recommendation(token: str = Depends(security)):
             messages=[{"role": "user", "content": prompt}],
             tools=[
                 {
-                "type": "function",
-                "function": {
-                    "name": "generate_meal_recommendations",
-                    "description": "Generate structured meal recommendations based on user attributes and meal goals.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "recommendations": {
-                                "type": "array",
-                                "description": "List of recommended meals with details.",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "meal_name": {"type": "string", "description": "Name of the recommended meal"},
-                                        "description": {"type": "string", "description": "Short description of the meal"},
-                                        "nutritional_attributes": {
-                                            "type": "array",
-                                            "items": {"type": "string"}
-                                        }
+                    "type": "function",
+                    "function": {
+                        "name": "generate_meal_recommendations",
+                        "description": "Generate structured meal recommendations based on user attributes and meal goals.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "LOCATION": {
+                                    "type": "array",
+                                    "description": "List of recommended meals for the user at a given dining location.",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {
+                                                "type": "string",
+                                                "description": "Name of the recommended meal."
+                                            },
+                                            "tags": {
+                                                "type": "array",
+                                                "description": "Specific reasons why to pick food items specific to the user, things like 'high protein' or 'low sodium,' 'carbs,' 'cheap,' 'quick eats,' etc.",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "modifications": {
+                                                "type": "string",
+                                                "description": "Pick from the listed additional modifications that would complete the meal according to the user and their eating goals."
+                                            },
+                                            "reason": {
+                                                "type": "string",
+                                                "description": "Brief description of the food and why it is an optimal food choice for this specific individual and their food goals."
+                                            },
+                                            "price": {
+                                                "type": "number",
+                                                "description": "The price of the meal."
+                                            }
+                                        },
+                                        "required": ["name", "tags", "modifications", "reason", "price"]
                                     }
                                 }
-                            }
-                        },
-                        "required": ["recommendations"]
+                            },
+                            "required": ["LOCATION"]
                         }
                     }
                 }
