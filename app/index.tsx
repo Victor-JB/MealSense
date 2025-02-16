@@ -7,20 +7,19 @@ import { useNavigation } from "@react-navigation/native";
 
 const SignInScreen: React.FC = () => {
   const theme = useTheme();
-  const navigation = useNavigation(); // ✅ Get navigation instance
+  const navigation = useNavigation(); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { user, loading } = useAuth(); // Get auth state
+  const { user, loading } = useAuth(); 
 
-  // 🔥 FIX: Ensure navigation only happens *after* render
   useEffect(() => {
     if (user) {
-      navigation.navigate("Main"); // ✅ Navigate to Main App on login
+      navigation.navigate("Main"); 
     }
   }, [user]);
 
-  if (loading) return null; // Avoid rendering during loading
+  if (loading) return null; 
 
   const handleSignIn = async () => {
     try {
@@ -56,7 +55,7 @@ const SignInScreen: React.FC = () => {
           <Button mode="contained" onPress={handleSignIn} style={{ marginBottom: 10 }}>
             Sign In
           </Button>
-          {/* ✅ FIXED: Use navigation instead of router */}
+          {/* FIXED: Use navigation instead of router */}
           <Button mode="text" onPress={() => navigation.navigate("SignUp")}>
             Don't have an account? Sign Up
           </Button>

@@ -150,10 +150,11 @@ const SettingsScreen: React.FC = () => {
 
                 {/* Save Button */}
                 <Button mode="contained" onPress={() => {
-                    // updateUserField("height", height);
-                    // updateUserField("weight", weight);
-                    // updateUserField("sex", sex);
-                    // updateUserField("dietaryGoals", additionalInfo);
+                    console.log("REQUESTING UPDATE");
+                    // updateUserField({sex: sex});
+                    // updateUserField({height: height});
+                    // updateUserField({weight: weight});
+                    // updateUserField({dietaryGoals: additionalInfo}); 
                     console.log("Settings Saved");
                 }} style={{ marginTop: 20 }}>
                     Save Changes

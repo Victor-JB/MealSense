@@ -1,8 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
-import { useTheme, Card, Chip } from "react-native-paper";
+import { MD3DarkTheme as defaultDark, useTheme, Card, Chip } from "react-native-paper";
 import { fetchRecommendation, getTimeGreeting } from "../mainService";
 import useAuth from "../useAuth";
+
+// Add this function after the imports and before the meals constant
+const getTagColor = (tag: string) => {
+  // Generate a hash from the tag string
+  let hash = 0;
+  for (let i = 0; i < tag.length; i++) {
+    hash = tag.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  
+  // Convert hash to RGB color
+  const r = (hash & 0xFF0000) >> 16;
+  const g = (hash & 0x00FF00) >> 8;
+  const b = hash & 0x0000FF;
+  
+  // Make the color lighter by mixing with white
+  const lightR = Math.floor((r + 255) / 2);
+  const lightG = Math.floor((g + 255) / 2);
+  const lightB = Math.floor((b + 255) / 2);
+  
+  return `rgb(${lightR}, ${lightG}, ${lightB})`;
+};
+
 
 const meals = [
   {
@@ -15,73 +37,55 @@ const meals = [
     name: "Vegan Tofu Stir-Fry",
     image: require("../assets/images/error404.png"), // Replace with actual image
     ingredients: "Tofu, bell peppers, broccoli, carrots, soy sauce, sesame seeds",
-    tags: ["Low Fat", "Carbs"]
+    tags: ["Protein", "Carbs"]
   },
   {
     name: "Salmon & Brown Rice",
     image: require("../assets/images/error404.png"), // Replace with actual image
     ingredients: "Grilled salmon, brown rice, asparagus, olive oil, garlic",
-    tags: ["Healthy Fats", "Reduce"]
+    tags: ["Bulk", "Reduce"]
   }
 ];
 
+const myGreeting = (): string => {
+  try {
+      const hour = new Date().getHours();
+      
+      if (typeof hour !== 'number') {
+          return "Hello"; // Fallback greeting
+      }
+      
+      if (hour < 12) {
+          return "Good morning";
+      } else if (hour < 18) {
+          return "Good afternoon";
+      } else {
+          return "Good evening";
+      }
+  } catch (error) {
+      console.error("Error in myGreeting:", error);
+      return "Hello"; // Fallback greeting if anything fails
+  }
+};
+
 const HomeScreen = ({ userName = "User" }) => {
-  const theme = {
-    "colors": {
-      "primary": "rgb(220, 184, 255)",
-      "onPrimary": "rgb(71, 12, 122)",
-      "primaryContainer": "rgb(95, 43, 146)",
-      "onPrimaryContainer": "rgb(240, 219, 255)",
-      "secondary": "rgb(208, 193, 218)",
-      "onSecondary": "rgb(54, 44, 63)",
-      "secondaryContainer": "rgb(77, 67, 87)",
-      "onSecondaryContainer": "rgb(237, 221, 246)",
-      "tertiary": "rgb(243, 183, 190)",
-      "onTertiary": "rgb(75, 37, 43)",
-      "tertiaryContainer": "rgb(101, 58, 65)",
-      "onTertiaryContainer": "rgb(255, 217, 221)",
-      "error": "rgb(255, 180, 171)",
-      "onError": "rgb(105, 0, 5)",
-      "errorContainer": "rgb(147, 0, 10)",
-      "onErrorContainer": "rgb(255, 180, 171)",
-      "background": "rgb(29, 27, 30)",
-      "onBackground": "rgb(231, 225, 229)",
-      "surface": "rgb(29, 27, 30)",
-      "onSurface": "rgb(231, 225, 229)",
-      "surfaceVariant": "rgb(74, 69, 78)",
-      "onSurfaceVariant": "rgb(204, 196, 206)",
-      "outline": "rgb(150, 142, 152)",
-      "outlineVariant": "rgb(74, 69, 78)",
-      "shadow": "rgb(0, 0, 0)",
-      "scrim": "rgb(0, 0, 0)",
-      "inverseSurface": "rgb(231, 225, 229)",
-      "inverseOnSurface": "rgb(50, 47, 51)",
-      "inversePrimary": "rgb(120, 69, 172)",
-      "elevation": {
-        "level0": "transparent",
-        "level1": "rgb(39, 35, 41)",
-        "level2": "rgb(44, 40, 48)",
-        "level3": "rgb(50, 44, 55)",
-        "level4": "rgb(52, 46, 57)",
-        "level5": "rgb(56, 49, 62)"
-      },
-      "surfaceDisabled": "rgba(231, 225, 229, 0.12)",
-      "onSurfaceDisabled": "rgba(231, 225, 229, 0.38)",
-      "backdrop": "rgba(51, 47, 55, 0.4)"
-    }
   const theme = useTheme();
   const [expandedMeal, setExpandedMeal] = useState(null);
-  const { user, loading: authLoading } = useAuth(); // Check auth state
+  const { user, loading: authLoading } = useAuth();
   const [recommendations, setRecommendations] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [greeting, setGreeting] = useState("never set");
 
   useEffect(() => {
-    // ✅ Only fetch if user is logged in
+    setGreeting(myGreeting());
+  }, []);
+
+  useEffect(() => {
     if (user && !authLoading) {
       loadRecommendations();
     }
-  }, [user, authLoading]); // Runs only when user is set
+  }, [user, authLoading]);
 
   const loadRecommendations = async () => {
     try {
@@ -101,16 +105,16 @@ const HomeScreen = ({ userName = "User" }) => {
   if (!user) return <Text style={{ color: theme.colors.error, textAlign: "center" }}>Please log in to see meal recommendations.</Text>
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: "#750000" }}>
+    <ScrollView style={{ flex: 1, backgroundColor: false ? theme.colors.background : "#750000" }}>
       {/* Header */}
-      <View style={{ padding: 20, backgroundColor: "#750000", alignItems: "center" }}>
-        <Text style={{ color: "white", fontSize: 22, fontWeight: "bold" }}>Santa Clara University</Text>
+      <View style={{ padding: 20, backgroundColor: false ? theme.colors.background : "#750000", alignItems: "center" }}>
+        <Text style={{ color: true ? "white" : "#750000", fontSize: 22, fontWeight: "bold" }}>Santa Clara University</Text>
       </View>
 
       {/* Greeting */}
       <View style={{ backgroundColor: "white", padding: 20 }}>
         <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-          {getTimeGreeting()}, {userName}!
+          {greeting}, {userName}! 
         </Text>
       </View>
 
@@ -128,10 +132,13 @@ const HomeScreen = ({ userName = "User" }) => {
                   </Text>
                   <View style={{ flexDirection: "row", marginTop: 5 }}>
                     {meal.tags.map((tag, i) => (
-                      <Chip key={i} style={{ marginRight: 5 }}>{tag}</Chip>
+                      <Chip key={i} style={{ marginRight: 5, backgroundColor: getTagColor(tag)}}>{tag}</Chip>
                     ))}
                   </View>
                 </View>
+
+
+                '
               </View>
             </TouchableOpacity>
 

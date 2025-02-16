@@ -9,13 +9,13 @@ import useAuth from "../useAuth";
 const ProfileScreen: React.FC = () => {
     const theme = useTheme();
     const user = useAuth();
-    const navigation = useNavigation(); // ✅ Get navigation instance
+    const navigation = useNavigation(); 
   
     const handleLogout = async () => {
       await logOut();
       navigation.reset({
         index: 0,
-        routes: [{ name: "SignIn" }], // ✅ Ensure logout resets to sign-in
+        routes: [{ name: "SignIn" }], 
       });
     };
 
