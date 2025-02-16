@@ -9,16 +9,13 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.maxtbennet.Hack4Hum2025"
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.maxtbennet.Hack4Hum2025",
-      "googleServicesFile": "./app/goog le-services.json"
+      }
     },
     "web": {
       "bundler": "metro",
@@ -35,25 +32,10 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ],
-      ["expo-build-properties", {
-        "ios": {
-          "useFrameworks": "static"
-        }
-      }],
-      "@react-native-firebase/app",
-      "@react-native-firebase/auth"
+      ]
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "7bbb9261-befd-4e01-ae9d-71ef85ad541e"
-      }
     }
   }
 }

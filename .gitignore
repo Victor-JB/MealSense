@@ -30,11 +30,12 @@ yarn-error.*
 *.pem
 
 # local env files
-.env
 .env*.local
-app/google-services.json
 
 # typescript
 *.tsbuildinfo
 
 app-example
+firebaseConfig.ts
+google-services.json
+.env

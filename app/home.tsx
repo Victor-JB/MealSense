@@ -1,22 +1,20 @@
 import React from "react";
-import { View } from "react-native";
-import { Text, Button, Card } from "react-native-paper";
-import { router } from "expo-router";
-import { logOut } from "../authService";
+import { View, SafeAreaView } from "react-native";
+import { Text, useTheme } from "react-native-paper";
 import useAuth from "../useAuth";
 
 const HomeScreen: React.FC = () => {
+  const theme = useTheme();
   const user = useAuth();
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", padding: 20 }}>
-      <Card style={{ padding: 20 }}>
-        <Text variant="titleLarge">Welcome, {user?.email || "User"}!</Text>
-        <Button mode="contained" onPress={() => { logOut(); router.replace("/sign-in"); }} style={{ marginTop: 10 }}>
-          Log Out
-        </Button>
-      </Card>
-    </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 20 }}>
+        <Text variant="headlineMedium">
+          Hello, {user?.email || "User"}
+        </Text>
+      </View>
+    </SafeAreaView>
   );
 };
 
