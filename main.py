@@ -96,7 +96,7 @@ async def generate_recommendation(token: str = Depends(security)):
         messages=[{"role": "user", "content": prompt}],
         functions=[{
             "name": "generate_meal_recommendations",
-            "description": "Generate structured meal recommendations based on user attributes and history.",
+            "description": "Generate structured meal recommendations based on user attributes and meal goals.",
             "parameters": {
                 "type": "object",
                 "properties": {
