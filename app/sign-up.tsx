@@ -4,7 +4,20 @@ import { TextInput, Button, Text, Card, useTheme } from "react-native-paper";
 import { router } from "expo-router";
 import { signUp } from "../authService";
 import { useNavigation } from "@react-navigation/native";
-import { initializeUserProfile } from "../mainService";
+import { updateUserField } from "../mainService";
+
+const defaultUserData = {
+    firstName: "",
+    lastName: "",
+    school: "Santa Clara University",
+    unit: "lbs/in",
+    weight: "100",
+    height: "60",
+    sex: "male",
+    dietaryGoals: "",
+    diningPoints: "2200",
+    createdAt: new Date().toISOString(),
+};
 
 const SignUpScreen: React.FC = () => {
     const navigation = useNavigation();
@@ -16,7 +29,7 @@ const SignUpScreen: React.FC = () => {
     const handleSignUp = async () => {
         try {
             await signUp(email, password);
-            initializeUserProfile();
+            updateUserField(defaultUserData);
             router.replace("/home");
         } catch (error: any) {
             setError(error.message);

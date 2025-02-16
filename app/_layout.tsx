@@ -4,7 +4,7 @@ import { PaperProvider, MD3DarkTheme as defaultDark, useTheme, Card, Chip } from
 import { SafeAreaView, View, StatusBar, Platform } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
-import { UserProfileProvider } from "./mainContext";
+import { UserProfileProvider, HistoryProvider } from "./mainContext";
 import HomeScreen from "./home";
 import SettingsScreen from "./settings";
 import ProfileScreen from "./profile";
@@ -65,7 +65,9 @@ export default function Layout() {
         <ThemedSafeAreaView>
           <NavigationContainer>
             <UserProfileProvider>
-              <RootNavigator />
+              <HistoryProvider>
+                <RootNavigator />
+              </HistoryProvider>
             </UserProfileProvider>
           </NavigationContainer>
         </ThemedSafeAreaView>

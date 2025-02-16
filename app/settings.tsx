@@ -34,6 +34,7 @@ const SettingsScreen: React.FC = () => {
     const [sex, setSex] = useState<"male" | "female">(userProfile?.sex || "male");
     const [dietaryGoals, setDietaryGoals] = useState(userProfile?.dietaryGoals || "");
     const [school, setSchool] = useState(userProfile?.school || "");
+    const [madeChange, setMadeChange] = useState(false);
 
     const toggleAnim = new Animated.Value(sex === "male" ? 0 : 1);
 
@@ -82,7 +83,7 @@ const SettingsScreen: React.FC = () => {
                     <TextInput
                         label={`First Name`}
                         value={firstName}
-                        onChangeText={setFirstName}
+                        onChangeText={(v) => { setFirstName(v); setMadeChange(true); }}
                         keyboardType="default"
                         mode="outlined"
                         style={{ flex: 1, marginRight: 5, backgroundColor: theme.colors.surface }}
@@ -90,7 +91,7 @@ const SettingsScreen: React.FC = () => {
                     <TextInput
                         label={`Last Name`}
                         value={lastName}
-                        onChangeText={setLastName}
+                        onChangeText={(v) => { setLastName(v); setMadeChange(true); }}
                         keyboardType="default"
                         mode="outlined"
                         style={{ flex: 1, marginLeft: 5, backgroundColor: theme.colors.surface }}
@@ -103,7 +104,7 @@ const SettingsScreen: React.FC = () => {
                     value={school}
                     items={schoolOptions}
                     setOpen={setOpen}
-                    setValue={setSchool}
+                    setValue={(v) => { setSchool(v); setMadeChange(true); }}
                     setItems={setSchoolOptions}
                     style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
                     dropDownContainerStyle={{ backgroundColor: theme.colors.surface }}
@@ -112,10 +113,10 @@ const SettingsScreen: React.FC = () => {
                 <Text variant="titleMedium" style={{ marginTop: 20 }}>Units</Text>
                 <SegmentedButtons
                     value={unit}
-                    onValueChange={(value) => setUnit(value as "kg/cm" | "lbs/in")}
+                    onValueChange={(value) => { setUnit(value as "kg/cm" | "lbs/in"); setMadeChange(true); }}
                     buttons={[
-                        { value: "metric", label: "Metric (kg/cm)" },
-                        { value: "imperial", label: "Imperial (lb/in)" }
+                        { value: "kg/cm", label: "Metric (kg/cm)" },
+                        { value: "lbs/in", label: "Imperial (lbs/in)" }
                     ]}
                 />
 
@@ -125,7 +126,7 @@ const SettingsScreen: React.FC = () => {
                         <TextInput
                             label={`Height (${unit === "kg/cm" ? "cm" : "in"})`}
                             value={height}
-                            onChangeText={setHeight}
+                            onChangeText={(v) => {setHeight(v); setMadeChange(true);}} 
                             keyboardType="numeric"
                             mode="outlined"
                             style={{ backgroundColor: theme.colors.surface, flex: 1 }}
@@ -136,7 +137,7 @@ const SettingsScreen: React.FC = () => {
                         <TextInput
                             label={`Weight (${unit === "kg/cm" ? "kg" : "lb"})`}
                             value={weight}
-                            onChangeText={setWeight}
+                            onChangeText={(v) => {setWeight(v); setMadeChange(true);}}
                             keyboardType="numeric"
                             mode="outlined"
                             style={{ backgroundColor: theme.colors.surface, flex: 1 }}
@@ -158,7 +159,7 @@ const SettingsScreen: React.FC = () => {
                         Male
                     </Text>
                     <Pressable
-                        onPress={toggleSex}
+                        onPress={() => {toggleSex(); setMadeChange(true);}}
                         style={{
                             width: 60,
                             height: 30,
@@ -203,7 +204,7 @@ const SettingsScreen: React.FC = () => {
                 <TextInput
                     label="Enter dietary restrictions, eating and health goals..."
                     value={dietaryGoals}
-                    onChangeText={setDietaryGoals}
+                    onChangeText={(v) => {setDietaryGoals(v); setMadeChange(true);}}
                     multiline
                     numberOfLines={4}
                     mode="outlined"
@@ -226,8 +227,9 @@ const SettingsScreen: React.FC = () => {
                     };
                     updateUserField(newData);
                     setUserProfile(newData);
+                    setMadeChange(false);
                     console.log("Settings Saved");
-                }}>
+                }} disabled={!madeChange}>
                     Save Changes
                 </Button>
             </View>

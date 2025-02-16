@@ -13,19 +13,22 @@ const meals = [
     name: "Grilled Chicken Bowl",
     image: require("../assets/images/error404.png"), // Replace with actual image
     ingredients: "Grilled chicken, quinoa, spinach, avocado, cherry tomatoes, lemon dressing",
-    tags: ["Protein", "Bulk"]
+    tags: ["High Protein", "Good for Bulk"],
+    price: "4.99"
   },
   {
     name: "Vegan Tofu Stir-Fry",
     image: require("../assets/images/error404.png"), // Replace with actual image
     ingredients: "Tofu, bell peppers, broccoli, carrots, soy sauce, sesame seeds",
-    tags: ["Protein", "Carbs"]
+    tags: ["Low Protein", "High Carbs"], 
+    price: "9.99"
   },
   {
     name: "Salmon & Brown Rice",
     image: require("../assets/images/error404.png"), // Replace with actual image
     ingredients: "Grilled salmon, brown rice, asparagus, olive oil, garlic",
-    tags: ["Bulk", "Reduce"]
+    tags: ["Good for Bulk", "Reduce Bodyfat"],
+    price: "40.01"
   }
 ];
 
@@ -70,7 +73,9 @@ const HomeScreen = () => {
       setLoading(true);
       setError("");
       const data = await fetchRecommendation();
+      // console.log(`RECEIVE: ${data}`);
       setRecommendations(data);
+      getUserProfile();
     } catch (err) {
       setError("Failed to load recommendations");
     } finally {
@@ -99,8 +104,14 @@ const HomeScreen = () => {
       <Image source={backgroundImage} style={{ width: "100%", height: 150 }}/>
 
       <View style={{ backgroundColor: "white", padding: 20 }}>
-        <Text style={{ fontSize: 18, fontWeight: "bold", textAlignVertical: "center", textAlign: "center" }}>
+        <Text style={{ fontSize: 24, fontWeight: "bold", textAlignVertical: "center", textAlign: "center" }}>
           {greeting}, {firstName}!
+        </Text>
+      </View>
+
+      <View style={{ backgroundColor: "white", marginTop: 24, padding: 8 }}>
+        <Text style={{ fontSize: 16, fontWeight: "bold", textAlignVertical: "center", textAlign: "left" }}>
+          BENSON
         </Text>
       </View>
 
@@ -114,7 +125,7 @@ const HomeScreen = () => {
               onPress={() => setExpandedMeal(expandedMeal === index ? null : index)}
             />
           ))
-          : <Text style={{ textAlign: "center", color: theme.colors.error }}>No meal recommendations available.</Text>}
+          : <Text style={{ textAlign: "center", color: "black" || theme.colors.error }}>No meal recommendations available.</Text>}
       </View>
     </ScrollView>
   );

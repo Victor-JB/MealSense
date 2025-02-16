@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useAuth from "./useAuth";
 import { auth } from "./firebaseConfig";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 const API_URL = "https://mealsense-api.vercel.app/"; // Replace with your actual backend URL
 
@@ -13,6 +14,8 @@ const defaultUserData = {
     height: "60",
     sex: "male",
     dietaryGoals: "",
+    diningPoints: "2200",
+    orderHistory: [],
     createdAt: new Date().toISOString(),
 };
 
@@ -42,15 +45,15 @@ export const fetchRecommendation = async () => {
             },
         });
         if (!response.ok) throw new Error("Failed to fetch recommendations");
+        console.log("ok");
+        const data = JSON.parse((await response.json()));
 
-        const data = await response.json();
+        // const nextFetchTime = data.nextFetchTime || now + 600000;
 
-        const nextFetchTime = data.nextFetchTime || now + 600000;
-
-        await AsyncStorage.setItem("mealRecommendations", JSON.stringify(data));
-        await AsyncStorage.setItem("nextFetchTime", nextFetchTime.toString());
-
-        return data;
+        // await AsyncStorage.setItem("mealRecommendations", JSON.stringify(data));
+        // await AsyncStorage.setItem("nextFetchTime", nextFetchTime.toString());
+        console.log("RECEIVE:", data.LOCATION);
+        return data?.LOCATION;
     } catch (error) {
         console.error("Error fetching recommendations:", error);
         throw error;
@@ -142,4 +145,12 @@ export const getUserProfile = async () => {
         console.error("Error retrieving user profile:", error);
         return defaultUserData;
     }
+};
+
+export const setUserOrderHistory = async (history: any) => {
+    return updateUserField({orderHistory: history})
+}
+
+export const getUserOrderHistory = async () => {
+    return (await getUserProfile())?.orderHistory || [];
 };
