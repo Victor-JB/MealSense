@@ -30,8 +30,17 @@ export const fetchRecommendation = async () => {
             return JSON.parse(cachedData);
         }
 
+        const currentUser = auth.currentUser;
+        if (!currentUser) throw new Error("User is not authenticated.");
+
         console.log("Fetching new recommendations...");
-        const response = await fetch(`${API_URL}/generate-recommendation/`);
+        const token = await currentUser.getIdToken();
+        const response = await fetch(`${API_URL}/generate-recommendation/`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         if (!response.ok) throw new Error("Failed to fetch recommendations");
 
         const data = await response.json();
@@ -51,30 +60,30 @@ export const fetchRecommendation = async () => {
 /**
  * Initializes user profile by sending default user data to FastAPI.
  */
-export const initializeUserProfile = async () => {
-    try {
-        const currentUser = auth.currentUser
-        if (!currentUser) throw new Error("User is not authenticated.");
+// export const initializeUserProfile = async () => {
+//     try {
+//         const currentUser = auth.currentUser
+//         if (!currentUser) throw new Error("User is not authenticated.");
 
-        const token = await currentUser.getIdToken();
-        const response = await fetch(`${API_URL}/set-user-data/`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(defaultUserData),
-        });
+//         const token = await currentUser.getIdToken();
+//         const response = await fetch(`${API_URL}/set-user-data/`, {
+//             method: "POST",
+//             headers: {
+//                 "Content-Type": "application/json",
+//                 Authorization: `Bearer ${token}`,
+//             },
+//             body: JSON.stringify(defaultUserData),
+//         });
 
-        if (!response.ok) {
-            throw new Error(`Failed to initialize user profile: ${response.status}`);
-        }
+//         if (!response.ok) {
+//             throw new Error(`Failed to initialize user profile: ${response.status}`);
+//         }
 
-        console.log("User profile initialized successfully.");
-    } catch (error) {
-        console.error("Error initializing user profile:", error);
-    }
-};
+//         console.log("User profile initialized successfully.");
+//     } catch (error) {
+//         console.error("Error initializing user profile:", error);
+//     }
+// };
 
 /**
  * Updates specific user fields by sending the update to FastAPI.
@@ -122,11 +131,12 @@ export const getUserProfile = async () => {
         });
 
         if (!response.ok) {
+            console.log("FAIL:", response);
             throw new Error(`Failed to retrieve user profile: ${response.status}`);
         }
 
         const userData = await response.json();
-        console.log("Retrieved user profile:", userData.user_data);
+        // console.log("Retrieved user profile:", userData.user_data);
         return userData.user_data;
     } catch (error) {
         console.error("Error retrieving user profile:", error);

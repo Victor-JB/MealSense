@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, SafeAreaView } from "react-native";
-import { TextInput, Button, Text, Card, useTheme } from "react-native-paper";
+import { TextInput, Button, Text, Card, useTheme, ActivityIndicator } from "react-native-paper";
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
@@ -15,12 +15,12 @@ const SignInScreen: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
 
-  // ✅ Listen for authentication state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
-        initializeUserProfile();
+        // initializeUserProfile();
+        navigation.navigate("Main"); 
       } else {
         setUser(null);
       }
@@ -30,14 +30,20 @@ const SignInScreen: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-  // ✅ Redirect when user logs in
-  useEffect(() => {
-    if (user) {
-      navigation.navigate("Main"); 
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user) {
+  //     navigation.navigate("Main"); 
+  //   }
+  // }, [user]);
 
-  if (loading) return null; // Avoid rendering until auth state is checked
+  if (loading) {
+    return (
+      <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </SafeAreaView>
+    );
+  }
+  
 
   const handleSignIn = async () => {
     try {

@@ -3,6 +3,7 @@ import { ScrollView, SafeAreaView, View, Pressable, Animated } from "react-nativ
 import { TextInput, Button, Text, SegmentedButtons, useTheme } from "react-native-paper";
 import DropDownPicker from "react-native-dropdown-picker";
 import { updateUserField, getUserProfile } from "../mainService";
+import { useUserProfile } from "./mainContext";
 
 const schools = [
     { label: "Santa Clara University", value: "Santa Clara University" },
@@ -22,16 +23,17 @@ const schools = [
 
 const SettingsScreen: React.FC = () => {
     const theme = useTheme();
+    const { userProfile, setUserProfile } = useUserProfile();
     const [open, setOpen] = useState(false); // Controls dropdown visibility
     const [schoolOptions, setSchoolOptions] = useState(schools);
-    const [firstName, setFirstName] = useState("FIRST");
-    const [lastName, setLastName] = useState("LAST");
-    const [unit, setUnit] = useState<"metric" | "imperial">("metric");
-    const [height, setHeight] = useState("");
-    const [weight, setWeight] = useState("");
-    const [sex, setSex] = useState<"male" | "female">("male");
-    const [dietaryGoals, setDietaryGoals] = useState("");
-    const [school, setSchool] = useState("");
+    const [firstName, setFirstName] = useState(userProfile?.firstName || "FIRST");
+    const [lastName, setLastName] = useState(userProfile?.lastName || "LAST");
+    const [unit, setUnit] = useState<"kg/cm" | "lbs/in">(userProfile?.unit || "lbs/in");
+    const [height, setHeight] = useState(userProfile?.height || "");
+    const [weight, setWeight] = useState(userProfile?.weight || "");
+    const [sex, setSex] = useState<"male" | "female">(userProfile?.sex || "male");
+    const [dietaryGoals, setDietaryGoals] = useState(userProfile?.dietaryGoals || "");
+    const [school, setSchool] = useState(userProfile?.school || "");
 
     const toggleAnim = new Animated.Value(sex === "male" ? 0 : 1);
 
@@ -110,7 +112,7 @@ const SettingsScreen: React.FC = () => {
                 <Text variant="titleMedium" style={{ marginTop: 20 }}>Units</Text>
                 <SegmentedButtons
                     value={unit}
-                    onValueChange={(value) => setUnit(value as "metric" | "imperial")}
+                    onValueChange={(value) => setUnit(value as "kg/cm" | "lbs/in")}
                     buttons={[
                         { value: "metric", label: "Metric (kg/cm)" },
                         { value: "imperial", label: "Imperial (lb/in)" }
@@ -119,9 +121,9 @@ const SettingsScreen: React.FC = () => {
 
                 <View style={{ marginTop: 20, flexDirection: 'row', alignContent: 'center', alignItems: 'center', justifyContent: 'space-between' }}>
                     <View style={{ flex: 1, marginRight: 5 }}>
-                        <Text variant="titleMedium">Height ({unit === "metric" ? "cm" : "in"})</Text>
+                        <Text variant="titleMedium">Height ({unit === "kg/cm" ? "cm" : "in"})</Text>
                         <TextInput
-                            label={`Height (${unit === "metric" ? "cm" : "in"})`}
+                            label={`Height (${unit === "kg/cm" ? "cm" : "in"})`}
                             value={height}
                             onChangeText={setHeight}
                             keyboardType="numeric"
@@ -130,9 +132,9 @@ const SettingsScreen: React.FC = () => {
                         />
                     </View>
                     <View style={{ flex: 1, marginLeft: 5 }}>
-                        <Text variant="titleMedium">Weight ({unit === "metric" ? "kg" : "lb"})</Text>
+                        <Text variant="titleMedium">Weight ({unit === "kg/cm" ? "kg" : "lb"})</Text>
                         <TextInput
-                            label={`Weight (${unit === "metric" ? "kg" : "lb"})`}
+                            label={`Weight (${unit === "kg/cm" ? "kg" : "lb"})`}
                             value={weight}
                             onChangeText={setWeight}
                             keyboardType="numeric"
@@ -212,7 +214,7 @@ const SettingsScreen: React.FC = () => {
             <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: 20, backgroundColor: theme.colors.surface }}>
                 <Button mode="contained" onPress={() => {
                     console.log("REQUESTING UPDATE");
-                    updateUserField({
+                    const newData = {
                         sex: sex,
                         unit: unit,
                         firstName: firstName,
@@ -221,7 +223,9 @@ const SettingsScreen: React.FC = () => {
                         school: school,
                         height: height,
                         weight: weight,
-                    });
+                    };
+                    updateUserField(newData);
+                    setUserProfile(newData);
                     console.log("Settings Saved");
                 }}>
                     Save Changes
