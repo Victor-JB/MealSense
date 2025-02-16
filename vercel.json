@@ -10,9 +10,7 @@
       "src": "/(.*)",
       "dest": "main.py"
     }
-  ]
-}
-{
+  ],
   "crons": [
     {
       "path": "/update-meals/",
