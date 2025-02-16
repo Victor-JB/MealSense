@@ -71,7 +71,7 @@ def verify_firebase_user(token: str):
 @app.get("/generate-recommendation/")
 async def generate_recommendation(token: str = Depends(security)):
     user_id = verify_firebase_user(token.credentials)
-    logger.warning("user_id" + user_id)
+    # logger.warning("user_id" + user_id)
 
     # Fetch user document
     user_doc_ref = db.collection("users").document(user_id)
