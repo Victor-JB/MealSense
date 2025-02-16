@@ -4,6 +4,7 @@ import { TextInput, Button, Text, Card, useTheme } from "react-native-paper";
 import { router } from "expo-router";
 import { signUp } from "../authService";
 import { useNavigation } from "@react-navigation/native";
+import { initializeUserProfile } from "../mainService";
 
 const SignUpScreen: React.FC = () => {
     const navigation = useNavigation();

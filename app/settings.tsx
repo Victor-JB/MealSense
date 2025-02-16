@@ -45,20 +45,45 @@ const SettingsScreen: React.FC = () => {
         }).start();
     };
 
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+                const userProfile = await getUserProfile();
+                if (userProfile) {
+                    setFirstName(userProfile.firstName);
+                    setLastName(userProfile.lastName);
+                    setSchool(userProfile.school);
+                    setUnit(userProfile.unit);
+                    setHeight(userProfile.height);
+                    setWeight(userProfile.weight);
+                    setSex(userProfile.sex);
+                    setDietaryGoals(userProfile.dietaryGoals);
+                } else {
+                    console.log("Invalid user profile found");
+                    console.log(userProfile);
+                }
+            } catch (error) {
+                console.error("Error fetching user profile:", error);
+            }
+        };
+
+        fetchUserProfile();
+    }, []);
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
-            <ScrollView contentContainerStyle={{ padding: 20 }} style={{marginBottom: 60}}>
+            <ScrollView contentContainerStyle={{ padding: 20 }} style={{ marginBottom: 60 }}>
                 <Text variant="titleLarge">Settings</Text>
 
                 <Text variant="titleMedium" style={{ marginTop: 20 }}>Name</Text>
-                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <TextInput
                         label={`First Name`}
                         value={firstName}
                         onChangeText={setFirstName}
                         keyboardType="default"
                         mode="outlined"
-                        style={{ flex: 1, marginRight: 5,backgroundColor: theme.colors.surface }}
+                        style={{ flex: 1, marginRight: 5, backgroundColor: theme.colors.surface }}
                     />
                     <TextInput
                         label={`Last Name`}
@@ -92,8 +117,8 @@ const SettingsScreen: React.FC = () => {
                     ]}
                 />
 
-                <View style={{marginTop: 20, flexDirection: 'row', alignContent: 'center', alignItems: 'center', justifyContent: 'space-between'}}>
-                    <View style={{flex: 1, marginRight: 5}}>
+                <View style={{ marginTop: 20, flexDirection: 'row', alignContent: 'center', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <View style={{ flex: 1, marginRight: 5 }}>
                         <Text variant="titleMedium">Height ({unit === "metric" ? "cm" : "in"})</Text>
                         <TextInput
                             label={`Height (${unit === "metric" ? "cm" : "in"})`}
@@ -104,7 +129,7 @@ const SettingsScreen: React.FC = () => {
                             style={{ backgroundColor: theme.colors.surface, flex: 1 }}
                         />
                     </View>
-                    <View style={{flex: 1, marginLeft: 5}}>
+                    <View style={{ flex: 1, marginLeft: 5 }}>
                         <Text variant="titleMedium">Weight ({unit === "metric" ? "kg" : "lb"})</Text>
                         <TextInput
                             label={`Weight (${unit === "metric" ? "kg" : "lb"})`}
@@ -119,10 +144,10 @@ const SettingsScreen: React.FC = () => {
                 <Text variant="titleMedium" style={{ marginTop: 20 }}>Sex</Text>
 
                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 10, width: "100%" }}>
-                    <Text 
-                        variant="bodyLarge" 
-                        style={{ 
-                            fontWeight: sex === "male" ? "bold" : "normal", 
+                    <Text
+                        variant="bodyLarge"
+                        style={{
+                            fontWeight: sex === "male" ? "bold" : "normal",
                             color: sex === "male" ? "skyblue" : "black",
                             minWidth: 65,
                             textAlign: "center"
@@ -130,13 +155,13 @@ const SettingsScreen: React.FC = () => {
                     >
                         Male
                     </Text>
-                    <Pressable 
-                        onPress={toggleSex} 
+                    <Pressable
+                        onPress={toggleSex}
                         style={{
-                            width: 60, 
-                            height: 30, 
-                            borderRadius: 15, 
-                            backgroundColor: sex === "male" ? "skyblue" : "pink", 
+                            width: 60,
+                            height: 30,
+                            borderRadius: 15,
+                            backgroundColor: sex === "male" ? "skyblue" : "pink",
                             justifyContent: "center",
                             alignItems: "center",
                             paddingHorizontal: 2
@@ -152,17 +177,17 @@ const SettingsScreen: React.FC = () => {
                                 left: 2,
                                 transform: [{
                                     translateX: toggleAnim.interpolate({
-                                        inputRange: [0, 1], 
+                                        inputRange: [0, 1],
                                         outputRange: [0, 30]
                                     })
                                 }]
                             }}
                         />
                     </Pressable>
-                    <Text 
-                        variant="bodyLarge" 
-                        style={{ 
-                            fontWeight: sex === "female" ? "bold" : "normal", 
+                    <Text
+                        variant="bodyLarge"
+                        style={{
+                            fontWeight: sex === "female" ? "bold" : "normal",
                             color: sex === "female" ? "pink" : "black",
                             minWidth: 65,
                             textAlign: "center"

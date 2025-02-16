@@ -62,7 +62,9 @@ export default function Layout() {
   return (
     <PaperProvider theme = {customTheme} >
         <ThemedSafeAreaView>
-          <RootNavigator />
+          <NavigationContainer>
+            <RootNavigator />
+          </NavigationContainer>
         </ThemedSafeAreaView>
     </PaperProvider>
   );

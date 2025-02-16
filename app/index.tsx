@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { View, SafeAreaView } from "react-native";
 import { TextInput, Button, Text, Card, useTheme } from "react-native-paper";
-import { signIn } from "../authService";
-import useAuth from "../useAuth";
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
-import auth from "@react-native-firebase/auth";
 import { initializeUserProfile } from "../mainService";
 
 const SignInScreen: React.FC = () => {
@@ -13,30 +12,36 @@ const SignInScreen: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { user, loading } = useAuth(); 
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
+  // ✅ Listen for authentication state changes
   useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged((user) => {
-        if (user) {
-            initializeUserProfile();
-        }
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+        initializeUserProfile();
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
     });
 
-    return () => unsubscribe(); // Cleanup listener
+    return () => unsubscribe();
   }, []);
 
+  // ✅ Redirect when user logs in
   useEffect(() => {
     if (user) {
       navigation.navigate("Main"); 
     }
   }, [user]);
 
-  if (loading) return null; 
+  if (loading) return null; // Avoid rendering until auth state is checked
 
   const handleSignIn = async () => {
     try {
-      await signIn(email, password);
-      // No need to call navigation.replace here! It will be handled by useEffect
+      await signInWithEmailAndPassword(auth, email, password);
     } catch (error: any) {
       setError(error.message);
     }

@@ -1,8 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import auth from "@react-native-firebase/auth";
-import firestore from "@react-native-firebase/firestore";
+import useAuth from "./useAuth";
+import { auth } from "./firebaseConfig";
 
-const API_URL = "https://your-backend-api.com/recommendations";
+const API_URL = "https://mealsense-api.vercel.app/"; // Replace with your actual backend URL
+
 const defaultUserData = {
     firstName: "",
     lastName: "",
@@ -12,9 +13,12 @@ const defaultUserData = {
     height: "60",
     sex: "male",
     dietaryGoals: "",
-    createdAt: firestore.FieldValue.serverTimestamp(),
+    createdAt: new Date().toISOString(),
 };
 
+/**
+ * Fetches meal recommendations with caching.
+ */
 export const fetchRecommendation = async () => {
     try {
         const cachedData = await AsyncStorage.getItem("mealRecommendations");
@@ -27,7 +31,7 @@ export const fetchRecommendation = async () => {
         }
 
         console.log("Fetching new recommendations...");
-        const response = await fetch(API_URL);
+        const response = await fetch(`${API_URL}/generate-recommendation/`);
         if (!response.ok) throw new Error("Failed to fetch recommendations");
 
         const data = await response.json();
@@ -44,39 +48,57 @@ export const fetchRecommendation = async () => {
     }
 };
 
+/**
+ * Initializes user profile by sending default user data to FastAPI.
+ */
 export const initializeUserProfile = async () => {
     try {
-        const currentUser = auth().currentUser;
+        const currentUser = auth.currentUser
         if (!currentUser) throw new Error("User is not authenticated.");
 
-        const userId = currentUser.uid;
-        const userRef = firestore().collection("users").doc(userId);
+        const token = await currentUser.getIdToken();
+        const response = await fetch(`${API_URL}/set-user-data/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(defaultUserData),
+        });
 
-        const doc = await userRef.get();
-        if (!doc.exists) {
-            await userRef.set(defaultUserData);
-            console.log("User profile initialized successfully.");
-        } else {
-            console.log("User profile already exists.");
+        if (!response.ok) {
+            throw new Error(`Failed to initialize user profile: ${response.status}`);
         }
+
+        console.log("User profile initialized successfully.");
     } catch (error) {
         console.error("Error initializing user profile:", error);
     }
 };
 
 /**
- * Updates a user's profile fields in Firestore.
+ * Updates specific user fields by sending the update to FastAPI.
  * @param data Object containing the fields to update.
  */
 export const updateUserField = async (data: Partial<Record<string, any>>) => {
     try {
-        const currentUser = auth().currentUser;
+        const currentUser = auth.currentUser;
         if (!currentUser) throw new Error("User is not authenticated.");
 
-        const userId = currentUser.uid;
-        const userRef = firestore().collection("users").doc(userId);
+        const token = await currentUser.getIdToken();
+        const response = await fetch(`${API_URL}/set-user-data/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(data),
+        });
 
-        await userRef.update(data);
+        if (!response.ok) {
+            throw new Error(`Failed to update user profile: ${response.status}`);
+        }
+
         console.log("User profile updated successfully.");
     } catch (error) {
         console.error("Error updating user profile:", error);
@@ -84,25 +106,28 @@ export const updateUserField = async (data: Partial<Record<string, any>>) => {
 };
 
 /**
- * Retrieves the user's profile from Firestore.
+ * Retrieves the user's profile from FastAPI.
  */
 export const getUserProfile = async () => {
     try {
-        const currentUser = auth().currentUser;
+        const currentUser = auth.currentUser;
         if (!currentUser) throw new Error("User is not authenticated.");
 
-        const userId = currentUser.uid;
-        const userRef = firestore().collection("users").doc(userId);
-        const doc = await userRef.get();
+        const token = await currentUser.getIdToken();
+        const response = await fetch(`${API_URL}/get-user-data/`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
-        if (doc.exists) {
-            const userData = doc.data();
-            console.log("Retrieved user profile:", userData);
-            return userData;
-        } else {
-            console.warn("User profile not found.");
-            return defaultUserData;
+        if (!response.ok) {
+            throw new Error(`Failed to retrieve user profile: ${response.status}`);
         }
+
+        const userData = await response.json();
+        console.log("Retrieved user profile:", userData.user_data);
+        return userData.user_data;
     } catch (error) {
         console.error("Error retrieving user profile:", error);
         return defaultUserData;

@@ -11,17 +11,17 @@ const getTagColor = (tag: string) => {
   for (let i = 0; i < tag.length; i++) {
     hash = tag.charCodeAt(i) + ((hash << 5) - hash);
   }
-  
+
   // Convert hash to RGB color
   const r = (hash & 0xFF0000) >> 16;
   const g = (hash & 0x00FF00) >> 8;
   const b = hash & 0x0000FF;
-  
+
   // Make the color lighter by mixing with white
   const lightR = Math.floor((r + 255) / 2);
   const lightG = Math.floor((g + 255) / 2);
   const lightB = Math.floor((b + 255) / 2);
-  
+
   return `rgb(${lightR}, ${lightG}, ${lightB})`;
 };
 
@@ -46,27 +46,6 @@ const meals = [
   }
 ];
 
-const myGreeting = (): string => {
-  try {
-      const hour = new Date().getHours();
-      
-      if (typeof hour !== 'number') {
-          return "Hello"; // Fallback greeting
-      }
-      
-      if (hour < 12) {
-          return "Good morning";
-      } else if (hour < 18) {
-          return "Good afternoon";
-      } else {
-          return "Good evening";
-      }
-  } catch (error) {
-      console.error("Error in myGreeting:", error);
-      return "Hello"; // Fallback greeting if anything fails
-  }
-};
-
 const HomeScreen = () => {
   const theme = useTheme();
   const [expandedMeal, setExpandedMeal] = useState(null);
@@ -76,10 +55,37 @@ const HomeScreen = () => {
   const [error, setError] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const [greeting, setGreeting] = useState("never set");
-  const { firstName } = getUserProfile();
+  const [firstName, setFirstName] = useState("User");
+
+  useEffect(async () => {
+    try {
+      const userProfile = await getUserProfile();
+      if (userProfile) {
+        setFirstName(userProfile.firstName);
+      } else {
+        console.log("Invalid user profile found");
+        console.log(userProfile);
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+    }
+  }, []);
 
   useEffect(() => {
-    setGreeting(myGreeting());
+    const hour = new Date().getHours();
+    let greeting;
+    if (typeof hour !== 'number') {
+      greeting = "Hello";
+    }
+
+    if (hour < 12) {
+      greeting = "Good morning";
+    } else if (hour < 18) {
+      greeting = "Good afternoon";
+    } else {
+      greeting = "Good evening";
+    }
+    setGreeting(greeting);
   }, []);
 
   useEffect(() => {
@@ -123,12 +129,12 @@ const HomeScreen = () => {
 
       <View style={{ backgroundColor: "white", padding: 20 }}>
         <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-          {greeting}, {firstName}! 
+          {greeting}, {firstName}!
         </Text>
       </View>
 
       <View style={{ padding: 15 }}>
-      {recommendations
+        {recommendations
           ? recommendations.map((meal, index) => (
             <Card key={index} style={{ marginBottom: 15, backgroundColor: "white", borderRadius: 10 }}>
               <TouchableOpacity onPress={() => setExpandedMeal(expandedMeal === index ? null : index)}>
@@ -141,7 +147,7 @@ const HomeScreen = () => {
                     </Text>
                     <View style={{ flexDirection: "row", marginTop: 5 }}>
                       {meal.tags.map((tag, i) => (
-                        <Chip key={i} style={{ marginRight: 5, backgroundColor: getTagColor(tag)}}>{tag}</Chip>
+                        <Chip key={i} style={{ marginRight: 5, backgroundColor: getTagColor(tag) }}>{tag}</Chip>
                       ))}
                     </View>
                   </View>
@@ -159,7 +165,7 @@ const HomeScreen = () => {
               )}
             </Card>
           ))
-        : <Text style={{ textAlign: "center", color: theme.colors.error }}>No meal recommendations available.</Text>}
+          : <Text style={{ textAlign: "center", color: theme.colors.error }}>No meal recommendations available.</Text>}
       </View>
     </ScrollView>
   );
