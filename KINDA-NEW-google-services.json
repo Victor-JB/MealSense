@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "674167675472",
+    "project_id": "mealsense-c2a08",
+    "storage_bucket": "mealsense-c2a08.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:674167675472:android:108d97c1336c9fecf90f55",
+        "android_client_info": {
+          "package_name": "com.mealsense.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "674167675472-0uqna83m5bl9a3ofqrjavbvaii3rji7t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mealsense.mealsense",
+            "certificate_hash": "6f39b9e20f344f5ab97614de26a9120142e490c5"
+          }
+        },
+        {
+          "client_id": "674167675472-34j4roglenjqkltscn01mli0ejdhcej8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyR1i_Ens414BZDS_yDQ4HNa44f3GmpoQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "674167675472-34j4roglenjqkltscn01mli0ejdhcej8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

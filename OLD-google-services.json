@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "37487651941",
+    "project_id": "mealsense-users",
+    "storage_bucket": "mealsense-users.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37487651941:android:a34b83b229676181b9ea8c",
+        "android_client_info": {
+          "package_name": "com.mealsense.mealsense"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABWhtN9nATaHJIhdD6sAA5mYYOUdfeUwA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
