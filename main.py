@@ -196,6 +196,7 @@ async def get_user_data(token: str = Depends(security)):
 
     return {"status": "success", "user_data": user_doc.to_dict()}
 
+# TODO: see if I even need this as a route;
 @app.get("/update-meals/")
 def update_meals():
     """Fetch new meals and update JSON file."""
