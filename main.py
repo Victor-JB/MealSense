@@ -60,6 +60,7 @@ security = HTTPBearer()
 # OpenAI API Key
 client = openai.AsyncOpenAI(api_key=os.getenv("openai_key"))
 
+# ---------------------------------------------------------------------------- #
 def verify_firebase_user(token: str):
     try:
         decoded_token = auth.verify_id_token(token)
@@ -68,6 +69,7 @@ def verify_firebase_user(token: str):
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid Firebase Token")
 
+# ---------------------------------------------------------------------------- #
 @app.get("/generate-recommendation/")
 async def generate_recommendation(token: str = Depends(security)):
     user_id = verify_firebase_user(token.credentials)
@@ -159,9 +161,23 @@ async def generate_recommendation(token: str = Depends(security)):
         logger.error("OpenAI API call failed: " + str(e))
         return {"error": str(e)}
 
-    recommendation_data = response.choices[0].message.tool_calls[0].function.arguments
+    raw_recommendation = response.choices[0].message.tool_calls[0].function.arguments
+    # Parse the response to ensure it's valid JSON
+    try:
+        recommendation_data = json.loads(raw_recommendation)
+    except json.JSONDecodeError as e:
+        logger.error("Failed to parse recommendation data as JSON: " + str(e))
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "error": "Invalid JSON format in recommendation data",
+                "raw_recommendation": raw_recommendation
+            }
+        )
+
     return recommendation_data
 
+# ---------------------------------------------------------------------------- #
 @app.post("/set-user-data/")
 async def set_user_data(token: str = Depends(security), user_data: dict = Body(...)):
     """
@@ -180,6 +196,7 @@ async def set_user_data(token: str = Depends(security), user_data: dict = Body(.
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to update user data: {str(e)}")
 
+# ---------------------------------------------------------------------------- #
 @app.get("/get-user-data/")
 async def get_user_data(token: str = Depends(security)):
     """
@@ -196,6 +213,7 @@ async def get_user_data(token: str = Depends(security)):
 
     return {"status": "success", "user_data": user_doc.to_dict()}
 
+# ---------------------------------------------------------------------------- #
 # TODO: see if I even need this as a route;
 @app.get("/update-meals/")
 def update_meals():
