@@ -19,8 +19,6 @@
     "@react-native-firebase/app": "^21.14.0",
     "@react-native-firebase/auth": "^21.14.0",
     "@react-native-google-signin/google-signin": "^13.2.0",
-    "@react-navigation/bottom-tabs": "^7.2.0",
-    "@react-navigation/native": "^7.1.6",
     "expo": "~52.0.43",
     "expo-auth-session": "~6.0.3",
     "expo-blur": "~14.0.3",
@@ -46,7 +44,7 @@
     "react-native-screens": "~4.4.0",
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
-    "undefined": "expo-auth-session/providers/google"
+    "@react-native-picker/picker": "2.9.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
