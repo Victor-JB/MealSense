@@ -1,4 +1,4 @@
-package com.maxtbennet.Hack4Hum2025
+package com.mealsense.mobile
 
 import android.app.Application
 import android.content.res.Configuration

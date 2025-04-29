@@ -21,7 +21,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
   }
 }
 
-rootProject.name = 'Hack4Hum2025'
+rootProject.name = 'MealSense'
 
 dependencyResolutionManagement {
   versionCatalogs {

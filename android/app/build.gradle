@@ -86,9 +86,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.maxtbennet.Hack4Hum2025'
+    namespace 'com.mealsense.mobile'
     defaultConfig {
-        applicationId 'com.maxtbennet.Hack4Hum2025'
+        applicationId 'com.mealsense.mobile'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

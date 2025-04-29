@@ -1,4 +1,4 @@
-package com.maxtbennet.Hack4Hum2025
+package com.mealsense.mobile
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

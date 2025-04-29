@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "MealSense",
-    "slug": "MealSense",
+    "slug": "mealsense",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -27,6 +27,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "expo-dev-client",
       "expo-router",
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
@@ -46,9 +47,9 @@
             "useFrameworks": "static"
           },
           "android": {
-            "compileSdkVersion": 34,
-            "targetSdkVersion": 34,
-            "buildToolsVersion": "34.0.0"
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "buildToolsVersion": "35.0.0"
           }
         }
       ]
@@ -61,8 +62,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "7bbb9261-befd-4e01-ae9d-71ef85ad541e"
+        "projectId": "924d0918-66bb-47b2-a1e3-d5b8e59003c2"
       }
-    }
+    },
+    "owner": "mealsense"
   }
 }

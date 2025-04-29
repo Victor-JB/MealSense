@@ -25,8 +25,8 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="myapp"/>
-        <data android:scheme="com.maxtbennet.Hack4Hum2025"/>
-        <data android:scheme="exp+hack4hum2025"/>
+        <data android:scheme="com.mealsense.mobile"/>
+        <data android:scheme="exp+mealsense"/>
       </intent-filter>
     </activity>
   </application>
