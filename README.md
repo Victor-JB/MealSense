@@ -1,3 +1,32 @@
+# Commands
+
+### Building / Deploying
+
+Make sure to comment out the `google-services.json` file in the `.gitignore` file so that expo application services can access it for each build.
+
+Prepare for build and clean up files??:
+```bash
+npx expo prebuild --clean
+```
+
+Clean rebuild for iOS:
+```bash
+eas build --platform ios --profile development --clear-cache
+```
+
+Clean rebuild for Android:
+```bash
+eas build --platform android --profile development --clear-cache
+```
+
+
+
+
+
+
+
+
+
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
