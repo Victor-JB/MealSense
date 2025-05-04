@@ -1,12 +1,13 @@
 // app/signin.tsx
 import React from "react";
-import { View, SafeAreaView, StyleSheet, Image, Dimensions } from "react-native";
+import { View, StyleSheet, Image, Dimensions } from "react-native";
 import { Text, Button } from "react-native-paper";
 import { useRouter } from "expo-router";
 import LoadingScreen from "../components/LoadingScreen";
 import GoogleSignInButton from "../components/GoogleSignInButton";
 import { useAuthListener } from "../hooks/useAuthListener";
 import { LinearGradient } from "expo-linear-gradient"
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -21,7 +22,7 @@ export default function SignIn() {
   return (
     <LinearGradient
       // first color is at the top, second is at the bottom
-      colors={['#228B22', '#333333']}
+      colors={['#2fba2f', '#494949']}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.container}
@@ -52,7 +53,7 @@ export default function SignIn() {
             <Button
               mode="contained"
               style={styles.button}
-              onPress={() => router.replace("/signup")}
+              onPress={() => router.push("/signup")}
             >
               Eat Sensibly →
             </Button>
@@ -74,7 +75,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     padding: 20,
-    paddingVertical: 50,
+    paddingVertical: 20,
     alignItems: "center",
   },
   title: {
@@ -99,6 +100,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 24,
     color: "white",
+    marginVertical: 10,
   },
   label: {
     fontSize: 16,

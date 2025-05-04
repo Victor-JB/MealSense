@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, ImageBackground, Image, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from "react-native";
 import { useTheme, Card, Chip } from "react-native-paper";
-import auth, { getAuth } from '@react-native-firebase/auth';
 import MealCard from "../../components/MealCard";
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 
 const backgroundImage = require("../../assets/images/santaClaraBackground.png");
 
@@ -93,41 +94,43 @@ const HomeScreen = () => {
 //   if (!user) return <Text style={{ color: theme.colors.error, textAlign: "center" }}>Please log in to see meal recommendations.</Text>
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: false ? theme.colors.background : "#750000" }}
-      refreshControl={(
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.colors.primary]} />
-      )}>
-      <View style={{ backgroundColor: "#750000", paddingVertical: 10, paddingHorizontal: 20, borderRadius: 10 }}>
-        <Text style={{ color: "white", fontSize: 22, fontWeight: "bold", textAlignVertical: "center", textAlign: "center" }}>Santa Clara University</Text>
-      </View>
-      <Image source={backgroundImage} style={{ width: "100%", height: 150 }}/>
+    <SafeAreaView style={{ flex: 1, backgroundColor: false ? theme.colors.background : "#750000" }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        refreshControl={(
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.colors.primary]} />
+        )}>
+        <View style={{ backgroundColor: "#750000", paddingVertical: 10, paddingHorizontal: 20, borderRadius: 10 }}>
+          <Text style={{ color: "white", fontSize: 22, fontWeight: "bold", textAlignVertical: "center", textAlign: "center" }}>Santa Clara University</Text>
+        </View>
+        <Image source={backgroundImage} style={{ width: "100%", height: 150 }}/>
 
-      <View style={{ backgroundColor: "white", padding: 20 }}>
-        <Text style={{ fontSize: 24, fontWeight: "bold", textAlignVertical: "center", textAlign: "center" }}>
-          {greeting}, {firstName}!
-        </Text>
-      </View>
+        <View style={{ backgroundColor: "white", padding: 20 }}>
+          <Text style={{ fontSize: 24, fontWeight: "bold", textAlignVertical: "center", textAlign: "center" }}>
+            {greeting}, {firstName}!
+          </Text>
+        </View>
 
-      <View style={{ backgroundColor: "white", marginTop: 24, padding: 8 }}>
-        <Text style={{ fontSize: 16, fontWeight: "bold", textAlignVertical: "center", textAlign: "left" }}>
-          BENSON
-        </Text>
-      </View>
+        <View style={{ backgroundColor: "white", marginTop: 24, padding: 8 }}>
+          <Text style={{ fontSize: 16, fontWeight: "bold", textAlignVertical: "center", textAlign: "left" }}>
+            BENSON
+          </Text>
+        </View>
 
-      <View style={{ padding: 15 }}>
-        {recommendations
-          ? recommendations.map((meal, index) => (
-            <MealCard
-              key={index}
-              meal={meal}
-              expanded={expandedMeal === index}
-              onPress={() => setExpandedMeal(expandedMeal === index ? null : index)}
-            />
-          ))
-          : <Text style={{ textAlign: "center", color: "black" || theme.colors.error }}>No meal recommendations available.</Text>}
-      </View>
-    </ScrollView>
+        <View style={{ padding: 15 }}>
+          {recommendations
+            ? recommendations.map((meal, index) => (
+              <MealCard
+                key={index}
+                meal={meal}
+                expanded={expandedMeal === index}
+                onPress={() => setExpandedMeal(expandedMeal === index ? null : index)}
+              />
+            ))
+            : <Text style={{ textAlign: "center", color: "black" || theme.colors.error }}>No meal recommendations available.</Text>}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

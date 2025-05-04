@@ -7,6 +7,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="home"
         options={{
+          headerShown: false,
           title: 'Home',
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="home" size={size} color={color} />
@@ -16,6 +17,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="profile"
         options={{
+          headerShown: false,
           title: 'Profile',
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="person" size={size} color={color} />
@@ -25,6 +27,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="settings"
         options={{
+          headerShown: false,
           title: 'Settings',
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="settings" size={size} color={color} />

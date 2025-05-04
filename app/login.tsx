@@ -1,18 +1,22 @@
 import React, { useState } from "react";
-import { SafeAreaView, View, StyleSheet } from "react-native";
-import { TextInput, Button, Text } from "react-native-paper";
+import { View, StyleSheet } from "react-native";
+import { TextInput, Button, Text, IconButton } from "react-native-paper";
 import { useRouter } from "expo-router";
 import auth from "@react-native-firebase/auth";
 import LoadingScreen from "../components/LoadingScreen";
 import GoogleSignInButton from "../components/GoogleSignInButton";
 import { useAuthListener } from "../hooks/useAuthListener";
+import { LinearGradient } from "expo-linear-gradient";
+import { theme } from "../hooks/theme";
+import BottomBackButton from "../components/BottomBackButton";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from "expo-status-bar";
 
 export default function Login() {
   const router = useRouter();
   const { user, loading } = useAuthListener((u) => {
     router.replace("/(tabs)/home");
   });
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -72,6 +76,7 @@ export default function Login() {
           Don't have an account? Sign Up
         </Button>
       </View>
+      <BottomBackButton/>
     </SafeAreaView>
   );
 }
@@ -79,7 +84,7 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   inner: { flex: 1, padding: 20, justifyContent: "center", alignItems: "center" },
-  title: { marginBottom: 20 },
+  title: { marginBottom: 20, fontWeight: "bold" },
   input: { width: "80%", marginBottom: 12 },
   button: { width: "80%", marginVertical: 8 },
   link: { marginTop: 12 },
