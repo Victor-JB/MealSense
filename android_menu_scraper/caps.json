@@ -1,0 +1,10 @@
+{
+  "platformName": "Android",
+  "automationName": "UIAutomator2",
+  "deviceName": "emulator-5554",
+  "appPackage": "com.example.transactmobileordering",
+  "appActivity": "com.example.transactmobileordering.ui.SplashActivity",
+  "disableWindowAnimation": true,
+  "newCommandTimeout": 600,
+  "autoGrantPermissions": true
+}
