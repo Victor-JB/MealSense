@@ -2,4 +2,5 @@
 2. figure out how to cache meal recommendations ahead of time, but also not over requesting to save on openai api costs
 4. figure out backend API compatible with google oauth, and IOS deployment!
 5. migrate environment variables in vercel; ensure that test users and db schema are properly set up ahead of time
- - create couple of test users
+ - create couple of test users using test script, then migrate to vercel
+ 
